@@ -31,9 +31,26 @@ class SqfliteHelper {
 
   Future<List<TodoModel>> getTodoList() async {
     Database dbInstance = await instance.database;
-    var data = await dbInstance.query('$tableName', orderBy: "name");
+    var data = await dbInstance.query('$tableName', orderBy: "id");
     List<TodoModel> singleData =
         data.isNotEmpty ? data.map((e) => TodoModel.fromMap(e)).toList() : [];
     return singleData;
+  }
+
+  Future<int> createTodoList(TodoModel toModel) async {
+    Database dbInstance = await instance.database;
+    return await dbInstance.insert('$tableName', toModel.toMap());
+  }
+
+  Future<int> removeTodoList(int id) async {
+    Database dbInstance = await instance.database;
+    return await dbInstance
+        .delete('$tableName', where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<int> updateTodoList(TodoModel todoModel) async {
+    Database dbInstance = await instance.database;
+    return await dbInstance.update('$tableName', todoModel.toMap(),
+        where: 'id = ?', whereArgs: [todoModel.id]);
   }
 }

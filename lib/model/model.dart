@@ -1,5 +1,5 @@
 class TodoModel {
-  String? id;
+  int? id;
   String name;
 
   TodoModel({this.id, required this.name});
