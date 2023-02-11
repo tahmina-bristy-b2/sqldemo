@@ -1,0 +1,13 @@
+class BackgroundServicesMethod {
+   Future<void> initialilization() async{
+    final service = FlutterBackgroundService();
+    const AndroidNotificationChannel creatingNotificationChannel= AndroidNotificationChannel(
+      'foreground_message_id', // id
+    'It\'s FOREGROUND SERVICE', // title
+    description:
+        'This channel is used for Local Notification', // description
+    importance: Importance.low,
+    );
+   }
+
+}

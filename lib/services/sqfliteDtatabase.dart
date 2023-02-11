@@ -27,7 +27,7 @@ class SqfliteHelper {
     _createFolder(databaseDir);
 
     return await openDatabase('${databaseDir.path}/mydatabase.db',
-        version: 3, onCreate: _onCreate);
+        password: '123', version: 3, onCreate: _onCreate);
   }
 
   Future _onCreate(Database db, int version) async {
