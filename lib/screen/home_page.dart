@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:sqflite_sqlcipher/sqflite.dart';
+import 'package:sqflitedemo/screen/location.dart';
 import 'package:sqflitedemo/services/sqfliteDtatabase.dart';
 import 'package:sqflitedemo/model/model.dart';
 import 'package:sqflitedemo/screen/background_service.dart';
@@ -62,7 +63,25 @@ class _HomePageState extends State<HomePage> {
                   icon: const Icon(Icons.personal_injury),
                 ),
                 title: const Text('Background Service'),
-              )
+              ),
+              ListTile(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const LocationScreen()));
+                },
+                leading: IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const LocationScreen()));
+                  },
+                  icon: const Icon(Icons.personal_injury),
+                ),
+                title: const Text('Location'),
+              ),
             ],
           ),
         ),
