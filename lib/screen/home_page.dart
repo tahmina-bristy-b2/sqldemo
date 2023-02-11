@@ -40,7 +40,7 @@ class _HomePageState extends State<HomePage> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              SizedBox(
+              const SizedBox(
                 height: 100,
               ),
               ListTile(
@@ -48,18 +48,20 @@ class _HomePageState extends State<HomePage> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => BackGroundServicesScreen()));
+                          builder: (context) =>
+                              const BackGroundServicesScreen()));
                 },
                 leading: IconButton(
                   onPressed: () {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => BackGroundServicesScreen()));
+                            builder: (context) =>
+                                const BackGroundServicesScreen()));
                   },
                   icon: const Icon(Icons.personal_injury),
                 ),
-                title: Text('Background Service'),
+                title: const Text('Background Service'),
               )
             ],
           ),
@@ -70,12 +72,12 @@ class _HomePageState extends State<HomePage> {
         builder:
             ((BuildContext context, AsyncSnapshot<List<TodoModel>> snapshot) {
           if (!snapshot.hasData) {
-            return Center(child: Text("Loading........"));
+            return const Center(child: Text("Loading........"));
           }
 
           return isShow == false
               ? snapshot.data!.isEmpty
-                  ? Center(child: Text('No todoList Found'))
+                  ? const Center(child: Text('No todoList Found'))
                   : ListView(
                       children: snapshot.data!.map((e) {
                         return Center(
@@ -105,7 +107,7 @@ class _HomePageState extends State<HomePage> {
         }),
       ),
       floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.save),
+          child: const Icon(Icons.save),
           onPressed: () async {
             selectedId != null
                 ? SqfliteHelper.instance.updateTodoList(
