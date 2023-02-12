@@ -2,6 +2,10 @@ import 'package:geolocator/geolocator.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
+////pink=F86592 FB81A6
+///purple =9B86FB  D4CCFC
+/// orange= FFC581 FCE0C2
+
 class LocationServices {
   Future<Position> getPermissionAndGetCurrentLocation() async {
     bool isServiceEnable;

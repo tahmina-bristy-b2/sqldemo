@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:sqflite_sqlcipher/sqflite.dart';
 import 'package:sqflitedemo/screen/location.dart';
 import 'package:sqflitedemo/services/sqfliteDtatabase.dart';
@@ -99,21 +100,88 @@ class _HomePageState extends State<HomePage> {
                   ? const Center(child: Text('No todoList Found'))
                   : ListView(
                       children: snapshot.data!.map((e) {
-                        return Center(
-                          child: ListTile(
-                            onTap: () {
-                              setState(() {
-                                SqfliteHelper.instance.removeTodoList(e.id!);
-                              });
-                            },
-                            onLongPress: () {
-                              setState(() {
-                                isShow = true;
-                                selectedId = e.id;
-                              });
-                            },
-                            title: Text(e.name),
-                            subtitle: Text('${e.id}'),
+                        return Slidable(
+                          startActionPane: ActionPane(
+                            motion: const DrawerMotion(),
+                            extentRatio: 0.50,
+                            children: [
+                              SlidableAction(
+                                label: 'Delete',
+                                backgroundColor: Color(0xffffafcc),
+                                icon: Icons.delete_forever,
+                                onPressed: (context) {
+                                  setState(() {
+                                    SqfliteHelper.instance
+                                        .removeTodoList(e.id!);
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                          endActionPane: ActionPane(
+                            motion: const DrawerMotion(),
+                            extentRatio: 0.50,
+                            children: [
+                              SlidableAction(
+                                label: 'Edit',
+                                backgroundColor: Color(0xffccd5ae),
+                                icon: Icons.edit,
+                                onPressed: (context) {
+                                  setState(() {
+                                    isShow = true;
+                                    selectedId = e.id;
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                          child: Center(
+                            child:
+                                // const Text('1'),
+                                // const SizedBox(width: 8),
+                                Row(
+                              children: [
+                                Expanded(
+                                    child: Center(
+                                  child: Text(
+                                    "${e.id}",
+                                    style: TextStyle(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black54),
+                                  ),
+                                )),
+                                Expanded(
+                                  flex: 8,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(top: 6),
+                                    child: Container(
+                                      // ignore: prefer_const_constructors
+                                      decoration: BoxDecoration(
+                                          color: const Color(0xffcca5de),
+                                          borderRadius: const BorderRadius.only(
+                                              topLeft: Radius.circular(20),
+                                              bottomLeft: Radius.circular(20))),
+                                      child: ListTile(
+                                        title: Text(
+                                          e.name,
+                                          style: TextStyle(
+                                              fontSize: 22,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white),
+                                        ),
+                                        subtitle: Text(
+                                          '${e.id}',
+                                          // ignore: prefer_const_constructors
+                                          style:
+                                              TextStyle(color: Colors.black45),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         );
                       }).toList(),
@@ -126,13 +194,16 @@ class _HomePageState extends State<HomePage> {
         }),
       ),
       floatingActionButton: FloatingActionButton(
+          backgroundColor: Color(0xff84a9a6),
           child: const Icon(Icons.save),
           onPressed: () async {
             selectedId != null
                 ? SqfliteHelper.instance.updateTodoList(
                     TodoModel(id: selectedId, name: controller.text))
-                : await SqfliteHelper.instance
-                    .createTodoList(TodoModel(name: controller.text));
+                : controller.text != ''
+                    ? await SqfliteHelper.instance
+                        .createTodoList(TodoModel(name: controller.text))
+                    : print('');
             setState(() {
               controller.clear();
               isShow = false;
