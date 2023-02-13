@@ -17,12 +17,30 @@ class _LocationScreenState extends State<LocationScreen> {
   String message = '';
   String lat = '';
   String long = '';
+  String placeName = '';
+  String roadName = '';
+  String counrty = '';
   @override
   void initState() {
     LocationServices().getPermissionAndGetCurrentLocation().then((value) {
       lat = '${value.latitude}';
       long = '${value.longitude}';
       setState(() {});
+      LocationServices().getPermissionAndGetCurrentLocation().then((value) {
+        lat = '${value.latitude}';
+        long = '${value.longitude}';
+        var a = LocationServices()
+            .getAddress(value.latitude, value.longitude)
+            .then((value) {
+          placeName = value.first.subLocality!;
+          roadName = value.first.street!;
+          counrty = value.first.country!;
+        });
+
+        setState(() {
+          print(message);
+        });
+      });
     });
 
     LocationServices().getLatLong(lat, long);
@@ -39,23 +57,30 @@ class _LocationScreenState extends State<LocationScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // ignore: prefer_const_constructors
           SizedBox(
             height: 200,
           ),
           ElevatedButton(
               onPressed: () async {
-                await LocationServices()
-                    .getPermissionAndGetCurrentLocation()
-                    .then((value) {
-                  lat = '${value.latitude}';
-                  long = '${value.longitude}';
+                // await LocationServices()
+                //     .getPermissionAndGetCurrentLocation()
+                //     .then((value) {
+                //   lat = '${value.latitude}';
+                //   long = '${value.longitude}';
+                //   var a = LocationServices()
+                //       .getAddress(value.latitude, value.longitude)
+                //       .then((value) {
+                //     placeName = value.first.subLocality!;
+                //     roadName = value.first.street!;
+                //     counrty = value.first.country!;
+                //   });
 
-                  setState(() {
-                    message =
-                        "lat======================$lat   long=====================$long";
-                    print(message);
-                  });
-                });
+                //   setState(() {
+
+                //     print(message);
+                //   });
+                // });
               },
               child: const Center(child: Text('Your Lat Long'))),
           Center(child: Text("Latitude : $lat \n logitude : $long")),

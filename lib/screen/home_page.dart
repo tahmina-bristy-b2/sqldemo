@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:sqflite_sqlcipher/sqflite.dart';
 import 'package:sqflitedemo/screen/location.dart';
 import 'package:sqflitedemo/services/sqfliteDtatabase.dart';
 import 'package:sqflitedemo/model/model.dart';
@@ -18,9 +15,15 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool isShow = false;
   int? selectedId;
+  String? title;
+  String? description;
   TextEditingController controller = TextEditingController();
+  TextEditingController desController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
+    controller.text = (selectedId != null ? title : '')!;
+    desController.text = (selectedId != null ? description : '')!;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -107,7 +110,7 @@ class _HomePageState extends State<HomePage> {
                             children: [
                               SlidableAction(
                                 label: 'Delete',
-                                backgroundColor: Color(0xffffafcc),
+                                backgroundColor: const Color(0xffffafcc),
                                 icon: Icons.delete_forever,
                                 onPressed: (context) {
                                   setState(() {
@@ -124,12 +127,14 @@ class _HomePageState extends State<HomePage> {
                             children: [
                               SlidableAction(
                                 label: 'Edit',
-                                backgroundColor: Color(0xffccd5ae),
+                                backgroundColor: const Color(0xffccd5ae),
                                 icon: Icons.edit,
                                 onPressed: (context) {
                                   setState(() {
                                     isShow = true;
                                     selectedId = e.id;
+                                    title = e.name;
+                                    description = e.description;
                                   });
                                 },
                               ),
@@ -145,6 +150,7 @@ class _HomePageState extends State<HomePage> {
                                     child: Center(
                                   child: Text(
                                     "${e.id}",
+                                    // ignore: prefer_const_constructors
                                     style: TextStyle(
                                         fontSize: 22,
                                         fontWeight: FontWeight.bold,
@@ -165,16 +171,17 @@ class _HomePageState extends State<HomePage> {
                                       child: ListTile(
                                         title: Text(
                                           e.name,
+                                          // ignore: prefer_const_constructors
                                           style: TextStyle(
                                               fontSize: 22,
                                               fontWeight: FontWeight.bold,
                                               color: Colors.white),
                                         ),
                                         subtitle: Text(
-                                          '${e.id}',
+                                          '${e.description}',
                                           // ignore: prefer_const_constructors
-                                          style:
-                                              TextStyle(color: Colors.black45),
+                                          style: const TextStyle(
+                                              color: Colors.black45),
                                         ),
                                       ),
                                     ),
@@ -186,8 +193,66 @@ class _HomePageState extends State<HomePage> {
                         );
                       }).toList(),
                     )
-              : TextField(
-                  controller: controller,
+              : Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextField(
+                        textCapitalization: TextCapitalization
+                            .sentences, // Capital first letter
+                        keyboardType: TextInputType.text,
+                        // ignore: prefer_const_constructors
+                        style: TextStyle(
+                            fontSize: 24,
+                            color: Colors.black54,
+                            fontWeight: FontWeight.bold),
+                        decoration: const InputDecoration(
+                            hintText: 'ADD TITLE',
+                            hintStyle: TextStyle(
+                                fontSize: 24,
+                                color: Colors.black54,
+                                fontWeight: FontWeight.bold),
+                            border: InputBorder.none),
+                        onChanged: (val) {
+                          controller.value = TextEditingValue(
+                              text: val.toUpperCase(),
+                              selection: controller.selection);
+
+                          // setState(() {});
+
+                          // val.toUpperCase();
+                        },
+
+                        // textCapitalization: TextCapitalization.characters,
+                        controller: controller,
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextField(
+                          // Capital first letter
+                          keyboardType: TextInputType.text,
+                          maxLines: 100,
+                          // ignore: prefer_const_constructors
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.black,
+                          ),
+                          decoration: const InputDecoration(
+                              hintText: 'Description ',
+                              hintStyle: TextStyle(
+                                fontSize: 16,
+                                color: Colors.black,
+                              ),
+                              border: InputBorder.none),
+
+                          // textCapitalization: TextCapitalization.characters,
+                          controller: desController,
+                        ),
+                      ),
+                    ),
+                  ],
                 );
 
           return const CircularProgressIndicator();
@@ -198,14 +263,17 @@ class _HomePageState extends State<HomePage> {
           child: const Icon(Icons.save),
           onPressed: () async {
             selectedId != null
-                ? SqfliteHelper.instance.updateTodoList(
-                    TodoModel(id: selectedId, name: controller.text))
+                ? SqfliteHelper.instance.updateTodoList(TodoModel(
+                    id: selectedId,
+                    name: controller.text,
+                    description: desController.text))
                 : controller.text != ''
-                    ? await SqfliteHelper.instance
-                        .createTodoList(TodoModel(name: controller.text))
+                    ? await SqfliteHelper.instance.createTodoList(TodoModel(
+                        name: controller.text, description: desController.text))
                     : print('');
             setState(() {
               controller.clear();
+              desController.clear();
               isShow = false;
             });
           }),

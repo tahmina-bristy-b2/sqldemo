@@ -1,3 +1,4 @@
+import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -38,6 +39,12 @@ class LocationServices {
       lat = value.latitude.toString();
       long = value.longitude.toString();
     });
+  }
+
+  Future<List<Placemark>> getAddress(double lat, double long) async {
+    List<Placemark> placeMark = await placemarkFromCoordinates(lat, long);
+    print("object============================${placeMark.first.subLocality}");
+    return placeMark;
   }
 
   launchURL(String lat, String long) async {

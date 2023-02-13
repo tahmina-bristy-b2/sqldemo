@@ -48,9 +48,12 @@ dependencies:
   shared_preferences: ^2.0.17
   #Location
   geolocator: ^9.0.2
+  geocoding: ^2.0.5
   url_launcher: ^6.1.9
   #for slide
   flutter_slidable: ^2.0.0
+ 
+  
 
 dev_dependencies:
   flutter_test:

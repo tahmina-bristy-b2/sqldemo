@@ -33,7 +33,9 @@ class SqfliteHelper {
   Future _onCreate(Database db, int version) async {
     String q = '''Create table SqlDatabase(
      id INTEGER PRIMARY KEY,
-    name TEXT )''';
+    name TEXT,
+    description TEXT
+     )''';
     await db.execute(q);
   }
 
