@@ -26,7 +26,7 @@ class _HomePageState extends State<HomePage> {
     desController.text = (selectedId != null ? description : '')!;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Color(0xff84a9a6),
         elevation: 0,
         actions: [
           IconButton(
@@ -37,7 +37,7 @@ class _HomePageState extends State<HomePage> {
               },
               icon: const Icon(
                 Icons.add,
-                color: Colors.black,
+                color: Colors.white,
               ))
         ],
       ),
@@ -178,7 +178,7 @@ class _HomePageState extends State<HomePage> {
                                               color: Colors.white),
                                         ),
                                         subtitle: Text(
-                                          '${e.description}',
+                                          e.description,
                                           // ignore: prefer_const_constructors
                                           style: const TextStyle(
                                               color: Colors.black45),

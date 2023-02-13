@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -27,8 +29,9 @@ class LocationServices {
   }
 
   void getLatLong(
-    String lat,
-    String long,
+    double lat,
+    double long,
+    String address,
   ) async {
     // ignore: prefer_const_constructors
     LocationSettings locationSettings = await LocationSettings(
@@ -36,15 +39,18 @@ class LocationServices {
 
     Geolocator.getPositionStream(locationSettings: locationSettings)
         .listen((value) {
-      lat = value.latitude.toString();
-      long = value.longitude.toString();
+      lat = value.latitude;
+      long = value.longitude;
+      address = getAddress(lat, long) as String;
+      // print("ASsssssssssssssssssssssssssssss==============$address");
     });
   }
 
-  Future<List<Placemark>> getAddress(double lat, double long) async {
+  Future<String?> getAddress(double lat, double long) async {
     List<Placemark> placeMark = await placemarkFromCoordinates(lat, long);
+    String? placeName = placeMark.first.subLocality;
     print("object============================${placeMark.first.subLocality}");
-    return placeMark;
+    return placeName;
   }
 
   launchURL(String lat, String long) async {

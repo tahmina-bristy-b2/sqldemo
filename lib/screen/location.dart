@@ -32,9 +32,9 @@ class _LocationScreenState extends State<LocationScreen> {
         var a = LocationServices()
             .getAddress(value.latitude, value.longitude)
             .then((value) {
-          placeName = value.first.subLocality!;
-          roadName = value.first.street!;
-          counrty = value.first.country!;
+          // placeName = value.first.subLocality!;
+          // roadName = value.first.street!;
+          // counrty = value.first.country!;
         });
 
         setState(() {
@@ -43,7 +43,7 @@ class _LocationScreenState extends State<LocationScreen> {
       });
     });
 
-    LocationServices().getLatLong(lat, long);
+    //LocationServices().getLatLong(lat, long);
 
     super.initState();
   }
@@ -52,7 +52,7 @@ class _LocationScreenState extends State<LocationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Location Screen'),
+        title: const Text('Location Screen'),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
