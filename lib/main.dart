@@ -21,6 +21,8 @@ double lat = 0.0;
 double long = 0.0;
 String address = '';
 String globalAddress = '';
+String roadName = '';
+String countryName = '';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,10 +39,15 @@ loc() async {
       .listen((value) async {
     lat = value.latitude;
     long = value.longitude;
-    address = await LocationServices().getAddress(lat, long) as String;
+    await LocationServices().getAddress(lat, long).then((value) {
+      address = value.first.subLocality!;
+      roadName = value.first.street!;
+      countryName = value.first.country!;
+    });
 
     globalAddress = address;
-    print("ASsssssssssssssssssssssssssssss==============$address");
+    print("address==============$address");
+    print("roadName==============$roadName");
   });
 }
 
@@ -96,14 +103,14 @@ void onStart(ServiceInstance serviceInstance) async {
       const Duration(seconds: 2),
       (timer) async {
         loc();
-        print(globalAddress);
+        print("$address $roadName $countryName");
         if (serviceInstance is AndroidServiceInstance) {
           if (await serviceInstance.isForegroundService()) {
             FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
                 FlutterLocalNotificationsPlugin();
             flutterLocalNotificationsPlugin.show(
                 888,
-                globalAddress,
+                "$roadName ,$globalAddress ,$countryName",
                 "body",
                 // ignore: prefer_const_constructors
                 NotificationDetails(

@@ -46,11 +46,11 @@ class LocationServices {
     });
   }
 
-  Future<String?> getAddress(double lat, double long) async {
+  Future<List<Placemark>> getAddress(double lat, double long) async {
     List<Placemark> placeMark = await placemarkFromCoordinates(lat, long);
     String? placeName = placeMark.first.subLocality;
     print("object============================${placeMark.first.subLocality}");
-    return placeName;
+    return placeMark;
   }
 
   launchURL(String lat, String long) async {
