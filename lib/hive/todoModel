@@ -1,0 +1,21 @@
+// import 'package:hive/hive.dart';
+// part 'TodoModelHive.g.dart';
+
+// @HiveType(typeId: 0)
+// class TodoModelHive{
+//   @HiveField(0)
+//   final String id;
+//   @HiveField(0)
+//   final String name;
+//   @HiveField(1)
+//   final String description;
+//   @HiveField(2)
+//   final bool location;
+
+//   DataModel({
+//     this.title,
+//     required this.name,
+//     required this.description,
+//     required this.location});
+
+// }

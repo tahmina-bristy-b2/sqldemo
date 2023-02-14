@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:sqflitedemo/main.dart';
-import 'package:sqflitedemo/screen/hive_database_data_home.dart';
 import 'package:sqflitedemo/screen/location.dart';
 import 'package:sqflitedemo/services/sqfliteDtatabase.dart';
 import 'package:sqflitedemo/model/model.dart';
 import 'package:sqflitedemo/screen/background_service.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class HivedatabaseHomeScreen extends StatefulWidget {
+  const HivedatabaseHomeScreen({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<HivedatabaseHomeScreen> createState() => _HivedatabaseHomeScreenState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HivedatabaseHomeScreenState extends State<HivedatabaseHomeScreen> {
   bool isShow = false;
   int? selectedId;
   String? title;
@@ -22,16 +23,15 @@ class _HomePageState extends State<HomePage> {
   String address1 = '';
   TextEditingController controller = TextEditingController();
   TextEditingController desController = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
     controller.text = (selectedId != null ? title : '')!;
     desController.text = (selectedId != null ? description : '')!;
-    address1 = address;
+
     print('{{{{{{{{{{{{{{{{{{{{{0000$address1}}}}}}}}}}}}}}}}}}}}}');
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home Page'),
+        title: const Text('Hive Home Page'),
         backgroundColor: Color(0xff84a9a6),
         elevation: 0,
         actions: [
@@ -114,24 +114,27 @@ class _HomePageState extends State<HomePage> {
                   icon: const Icon(Icons.personal_injury),
                 ),
                 title: const Text('Hive Database Data'),
-              ),
+              )
             ],
           ),
         ),
       ),
-      body: FutureBuilder(
-        future: SqfliteHelper.instance.getTodoList(),
-        builder:
-            ((BuildContext context, AsyncSnapshot<List<TodoModel>> snapshot) {
-          if (!snapshot.hasData) {
+      body: ValueListenableBuilder(
+        valueListenable: Hive.box('TodoData').listenable(),
+        builder: ((context, box, child) {
+          if (!box.isEmpty) {
             return const Center(child: Text("Loading........"));
           }
 
           return isShow == false
-              ? snapshot.data!.isEmpty
+              ? box.isEmpty
                   ? const Center(child: Text('No todoList Found'))
-                  : ListView(
-                      children: snapshot.data!.map((e) {
+                  : ListView.builder(
+                      itemCount: box.length,
+                      itemBuilder: (context, index) {
+                        final data =
+                            Hive.box('TodoData').getAt(index) as TodoModel;
+
                         return Slidable(
                           startActionPane: ActionPane(
                             motion: const DrawerMotion(),
@@ -142,10 +145,10 @@ class _HomePageState extends State<HomePage> {
                                 backgroundColor: const Color(0xffffafcc),
                                 icon: Icons.delete_forever,
                                 onPressed: (context) {
-                                  setState(() {
-                                    SqfliteHelper.instance
-                                        .removeTodoList(e.id!);
-                                  });
+                                  // setState(() {
+                                  //   SqfliteHelper.instance
+                                  //       .removeTodoList(e.id!);
+                                  // });
                                 },
                               ),
                             ],
@@ -161,9 +164,9 @@ class _HomePageState extends State<HomePage> {
                                 onPressed: (context) {
                                   setState(() {
                                     isShow = true;
-                                    selectedId = e.id;
-                                    title = e.name;
-                                    description = e.description;
+                                    selectedId = data.id;
+                                    title = data.name;
+                                    description = data.description;
                                   });
                                 },
                               ),
@@ -178,7 +181,7 @@ class _HomePageState extends State<HomePage> {
                                 Expanded(
                                     child: Center(
                                   child: Text(
-                                    "${e.id}",
+                                    "$data",
                                     // ignore: prefer_const_constructors
                                     style: TextStyle(
                                         fontSize: 22,
@@ -199,7 +202,7 @@ class _HomePageState extends State<HomePage> {
                                               bottomLeft: Radius.circular(20))),
                                       child: ListTile(
                                         title: Text(
-                                          e.name,
+                                          data.name,
                                           // ignore: prefer_const_constructors
                                           style: TextStyle(
                                               fontSize: 22,
@@ -207,7 +210,7 @@ class _HomePageState extends State<HomePage> {
                                               color: Colors.white),
                                         ),
                                         subtitle: Text(
-                                          e.location,
+                                          data.location,
                                           // ignore: prefer_const_constructors
                                           style: const TextStyle(
                                               color: Colors.black45),
@@ -220,7 +223,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                         );
-                      }).toList(),
+                      },
                     )
               : Column(
                   children: [

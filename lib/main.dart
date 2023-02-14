@@ -13,6 +13,8 @@ import 'package:flutter_background_service_android/flutter_background_service_an
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:sqflitedemo/screen/background_service.dart';
 import 'package:sqflitedemo/screen/home_page.dart';
 import 'package:sqflitedemo/services/locationServices.dart';
@@ -27,6 +29,9 @@ String countryName = '';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeService();
+  await Hive.initFlutter();
+  await Hive.openBox('TodoData');
+  //await Hive.openBox('')
 
   return runApp(MyApp());
 }

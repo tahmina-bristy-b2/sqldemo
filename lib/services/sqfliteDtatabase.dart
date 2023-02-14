@@ -34,7 +34,8 @@ class SqfliteHelper {
     String q = '''Create table SqlDatabase(
      id INTEGER PRIMARY KEY,
     name TEXT,
-    description TEXT
+    description TEXT,
+    location TEXT
      )''';
     await db.execute(q);
   }
