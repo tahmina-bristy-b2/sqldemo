@@ -21,20 +21,20 @@ class _BackGroundServicesScreenState extends State<BackGroundServicesScreen> {
                 stream: FlutterBackgroundService().on('update'),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
-                    return Center(child: const CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   }
                   var data = snapshot.data;
                   String? deviceName = data!['device'];
-                  DateTime? date = DateTime.tryParse(data!['current_date']);
+                  DateTime? date = DateTime.tryParse(data['current_date']);
                   return Column(
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         height: 150,
                       ),
                       Center(
                         child: Text(
                           deviceName ?? 'Unknown',
-                          style: TextStyle(
+                          style: const TextStyle(
                               color: Colors.black,
                               fontSize: 18,
                               fontWeight: FontWeight.bold),
@@ -46,13 +46,13 @@ class _BackGroundServicesScreenState extends State<BackGroundServicesScreen> {
                             FlutterBackgroundService()
                                 .invoke("setAsForeground");
                           },
-                          child: Text('Forground Mode')),
+                          child: const Text('Forground Mode')),
                       ElevatedButton(
                           onPressed: () {
                             FlutterBackgroundService()
                                 .invoke("setAsBackground");
                           },
-                          child: Text('Background Mode')),
+                          child: const Text('Background Mode')),
                       // ElevatedButton(
                       //   child: Text(text),
                       //   onPressed: () async {

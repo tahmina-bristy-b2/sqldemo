@@ -25,21 +25,16 @@ class _LocationScreenState extends State<LocationScreen> {
     LocationServices().getPermissionAndGetCurrentLocation().then((value) {
       lat = '${value.latitude}';
       long = '${value.longitude}';
-      setState(() {});
-      LocationServices().getPermissionAndGetCurrentLocation().then((value) {
-        lat = '${value.latitude}';
-        long = '${value.longitude}';
-        var a = LocationServices()
-            .getAddress(value.latitude, value.longitude)
-            .then((value) {
-          // placeName = value.first.subLocality!;
-          // roadName = value.first.street!;
-          // counrty = value.first.country!;
-        });
+      var a = LocationServices()
+          .getAddress(value.latitude, value.longitude)
+          .then((value) {
+        // placeName = value.first.subLocality!;
+        // roadName = value.first.street!;
+        // counrty = value.first.country!;
+      });
 
-        setState(() {
-          print(message);
-        });
+      setState(() {
+        print(message);
       });
     });
 

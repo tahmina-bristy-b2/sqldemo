@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:sqflitedemo/hive/boxes/allBoxes.dart';
+import 'package:sqflitedemo/hive/todo_model_hive.dart';
 import 'package:sqflitedemo/main.dart';
 import 'package:sqflitedemo/screen/location.dart';
+import 'package:sqflitedemo/services/hive_database_Service.dart';
 import 'package:sqflitedemo/services/sqfliteDtatabase.dart';
 import 'package:sqflitedemo/model/model.dart';
 import 'package:sqflitedemo/screen/background_service.dart';
@@ -23,6 +26,13 @@ class _HivedatabaseHomeScreenState extends State<HivedatabaseHomeScreen> {
   String address1 = '';
   TextEditingController controller = TextEditingController();
   TextEditingController desController = TextEditingController();
+  @override
+  void dispose() {
+    Boxes.getTodoData().close();
+    // TODO: implement dispose
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     controller.text = (selectedId != null ? title : '')!;
@@ -120,20 +130,16 @@ class _HivedatabaseHomeScreenState extends State<HivedatabaseHomeScreen> {
         ),
       ),
       body: ValueListenableBuilder(
-        valueListenable: Hive.box('TodoData').listenable(),
+        valueListenable: Boxes.getTodoData().listenable(),
         builder: ((context, box, child) {
-          if (!box.isEmpty) {
-            return const Center(child: Text("Loading........"));
-          }
-
           return isShow == false
               ? box.isEmpty
                   ? const Center(child: Text('No todoList Found'))
                   : ListView.builder(
                       itemCount: box.length,
                       itemBuilder: (context, index) {
-                        final data =
-                            Hive.box('TodoData').getAt(index) as TodoModel;
+                        List<TodoModelHive> data = box.values.toList()
+                          ..cast<TodoModelHive>();
 
                         return Slidable(
                           startActionPane: ActionPane(
@@ -145,10 +151,12 @@ class _HivedatabaseHomeScreenState extends State<HivedatabaseHomeScreen> {
                                 backgroundColor: const Color(0xffffafcc),
                                 icon: Icons.delete_forever,
                                 onPressed: (context) {
-                                  // setState(() {
-                                  //   SqfliteHelper.instance
-                                  //       .removeTodoList(e.id!);
-                                  // });
+                                  var uniqueKey;
+                                  uniqueKey = data[index].key;
+
+                                  print("unique Key= ${data[index].key}");
+
+                                  HiveDatabseServices().deleteTodo(uniqueKey);
                                 },
                               ),
                             ],
@@ -164,24 +172,24 @@ class _HivedatabaseHomeScreenState extends State<HivedatabaseHomeScreen> {
                                 onPressed: (context) {
                                   setState(() {
                                     isShow = true;
-                                    selectedId = data.id;
-                                    title = data.name;
-                                    description = data.description;
+                                    selectedId = index;
+                                    title = data[index].name;
+                                    description = data[index].description;
+                                    controller.text = data[index].name;
+                                    desController.text =
+                                        data[index].description;
                                   });
                                 },
                               ),
                             ],
                           ),
                           child: Center(
-                            child:
-                                // const Text('1'),
-                                // const SizedBox(width: 8),
-                                Row(
+                            child: Row(
                               children: [
-                                Expanded(
+                                const Expanded(
                                     child: Center(
                                   child: Text(
-                                    "$data",
+                                    "1",
                                     // ignore: prefer_const_constructors
                                     style: TextStyle(
                                         fontSize: 22,
@@ -202,7 +210,7 @@ class _HivedatabaseHomeScreenState extends State<HivedatabaseHomeScreen> {
                                               bottomLeft: Radius.circular(20))),
                                       child: ListTile(
                                         title: Text(
-                                          data.name,
+                                          data[index].name,
                                           // ignore: prefer_const_constructors
                                           style: TextStyle(
                                               fontSize: 22,
@@ -210,7 +218,7 @@ class _HivedatabaseHomeScreenState extends State<HivedatabaseHomeScreen> {
                                               color: Colors.white),
                                         ),
                                         subtitle: Text(
-                                          data.location,
+                                          data[index].location,
                                           // ignore: prefer_const_constructors
                                           style: const TextStyle(
                                               color: Colors.black45),
@@ -294,14 +302,16 @@ class _HivedatabaseHomeScreenState extends State<HivedatabaseHomeScreen> {
           backgroundColor: Color(0xff84a9a6),
           child: const Icon(Icons.save),
           onPressed: () async {
+            print("i am here at add section");
             selectedId != null
-                ? SqfliteHelper.instance.updateTodoList(TodoModel(
-                    id: selectedId,
-                    name: controller.text,
-                    description: desController.text,
-                    location: address))
+                ? await HiveDatabseServices().editTodo(
+                    selectedId!,
+                    TodoModelHive(
+                        name: controller.text,
+                        description: desController.text,
+                        location: address))
                 : controller.text != ''
-                    ? await SqfliteHelper.instance.createTodoList(TodoModel(
+                    ? await HiveDatabseServices().createaTodo(TodoModelHive(
                         name: controller.text,
                         description: desController.text,
                         location: address))
